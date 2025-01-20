@@ -13,8 +13,8 @@ var selectedNode = null;
 
 class Node {
   constructor(x, y) {
-    this.x = x;
-    this.y = y;
+    this.x = Math.round(x *100)/100;
+    this.y = Math.round(y *100)/100;
     this.edges = [];
   }
 
@@ -33,8 +33,9 @@ class Node {
     return false;
   }
 
-  animateNode() {
-
+  setCurrentLocation(x, y) {
+    this.currX = Math.round(x *100)/100;
+    this.currY = Math.round(y *100)/100;
   }
 }
 
@@ -55,7 +56,10 @@ function setup() {
   // resize canvas is the page is resized
 
   nodes = [];
-  nodes.push(new Node(canvas.width/2, canvas.height/2)); //Add starting node to center
+  node = new Node(canvas.width/2, canvas.height/2);
+  nodes.push(node); //Add starting node to center
+  node.setCurrentLocation(canvas.width/2, canvas.height/2);
+
 
   $(window).resize(function() {
     resizeScreen();
@@ -65,28 +69,38 @@ function setup() {
 
 //Function modified from generative design
 function displayNodes() {
+
   for (var i = 0; i < nodes.length; i++) {
     currNode = nodes[i];
 
     //Draw edges
-    stroke(0, 130, 164);
-    strokeWeight(2);
-    for (var j = 0; j < currNode.edges.length; j++) {
-      line(currNode.x, currNode.y, currNode.edges[j][0], currNode.edges[j][1]);
+    if(dist(currNode.currX, currNode.currY, currNode.x, currNode.y) <= 1) {
+      stroke(0, 130, 164);
+      strokeWeight(2);
+      for (var j = 0; j < currNode.edges.length; j++) {
+        line(currNode.x, currNode.y, currNode.edges[j][0], currNode.edges[j][1]);
+      }
+      currNode.currX = currNode.x; //Set final location to finish animation
+      currNode.currY = currNode.y;
     }
 
     //Draw node
     noStroke();
     fill(255);
-    ellipse(currNode.x, currNode.y, 16, 16);
+    ellipse(currNode.currX, currNode.currY, 16, 16);
     fill(0);
-    ellipse(currNode.x, currNode.y, 16 - 4, 16 - 4);
+    ellipse(currNode.currX, currNode.currY, 16 - 4, 16 - 4);
+
+    if(dist(currNode.currX, currNode.currY, currNode.x, currNode.y) > 0) {
+      //Move point along line code found at: https://stackoverflow.com/a/5995931
+      angle = Math.atan2(currNode.y - currNode.currY, currNode.x - currNode.currX);
+      currNode.setCurrentLocation(currNode.currX + Math.cos(angle), currNode.currY + Math.sin(angle));
+    }
   }
 }
 
 //Function modified from generative design
 //Check if node was pressed by checking mouse location and comparing to node locations
-//TODO: Modify the number of nodes created when clicked and narrow possible angles
 function mousePressed() {
   var nodeSize = 8;
   var maxDistFromNode = 200; //Max distance that a new node can be placed from selected node
@@ -119,10 +133,11 @@ function setNodeLocation(maxDist) {
   y = Math.floor(Math.random() * maxDist);
 
   newNode = new Node(selectedNode.x + x * Math.cos(angle), selectedNode.y + y * Math.sin(angle));
+
   if(!newNode.checkNodeOverlap()) {
-    newNode.animateNode();
     nodes.push(newNode);
     selectedNode.addEdges(newNode.x, newNode.y);
+    newNode.setCurrentLocation(selectedNode.x, selectedNode.y);
   }
 }
 
