@@ -32,7 +32,7 @@
 	<main id="content">
 		<section>
 
-			<h1>Experiment X - Subject/Topic</h1>
+			<h1>Experiment 2 - Vector Art, Animation & Interactivity</h1>
 
 			<div class="minor-section">
 				<div id="canvas-container">
@@ -45,17 +45,25 @@
 
 			<div class="minor-section">
 				<h2>Description</h2>
-				<p>What are you trying to acomplish with this experiment?</p>
+				<p>I was inspired by (<a href="https://editor.p5js.org/generative-design/sketches/M_6_1_03">this generative work</a>) 
+					since I liked the visual of a graph. I wanted to add animation; something resembing electricity following
+					a path in a piece of computer hardware. </p>
 			</div>
 
 			<div class="minor-section">
 				<h2>Technical</h2>
-				<p>Describe in detail what you did technically and how it works?</p>
+				<p>I used some code from the generative art piece (linked above) as a starting point.
+				The largest change was animating the nodes to follow the edge path when they were created. I calculated a random angle and distance from the clicked node,
+			  placed the new node, and then recalculated the angle using the Math.atan() function in order to move them. I also rounded the angles and locations of the 
+				nodes to the hundredths place to account for the slightly offset location when moving the nodes from the origin to their final location.</p>
 			</div>
 
 			<div class="minor-section">
 				<h2>Reflection</h2>
-				<p>Each person that worked on the code should reflect on the process, the difficulties, and the successes of the experiment.</p>
+				<p>Overall, I am happy with the way my experiment turned out and I feel like I accomplished in creating what I had envisioned.
+				Working with the draw function was the most difficult part of the project. I spent a few hours getting the nodes to move correctly and stop at their final location.
+				I also tried to write readable code as I progressed. Placing the nodes randomly was easy and only took some minor tweaking to get it to look how I wanted.
+				</p>
 			</div>
 
 		</section>
