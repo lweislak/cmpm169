@@ -22,6 +22,20 @@ class Node {
   addEdges(x, y) {
     this.edges.push([x, y]);
   }
+
+  //Check if new node overlaps
+  checkNodeOverlap() {
+    for(var i = 0; i < nodes.length; i++) {
+      if(dist(this.x, this.y, nodes[i].x, nodes[i].y) < 20) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  animateNode() {
+
+  }
 }
 
 function resizeScreen() {
@@ -50,7 +64,7 @@ function setup() {
 }
 
 //Function modified from generative design
-function displayNodes(nodes) {
+function displayNodes() {
   for (var i = 0; i < nodes.length; i++) {
     currNode = nodes[i];
 
@@ -75,21 +89,17 @@ function displayNodes(nodes) {
 //TODO: Modify the number of nodes created when clicked and narrow possible angles
 function mousePressed() {
   var nodeSize = 8;
-  var maxDistFromNode = 100; //Max distance that a new node can be placed from selected node
+  var maxDistFromNode = 200; //Max distance that a new node can be placed from selected node
+  numNodes = Math.floor((Math.random() * 5) + 2); //Random number of nodes created (1-5)
+
   for (var i = 0; i < nodes.length; i++) { //Check all nodes
     var checkNode = nodes[i];
     var d = dist(mouseX, mouseY, checkNode.x, checkNode.y);
     if (d < nodeSize) { //If node is selected, create new branching nodes
       selectedNode = checkNode;
-
-      //Random angle code from: https://stackoverflow.com/a/9879291
-      angle = Math.random() * 2 * Math.PI;
-      x = Math.floor(Math.random() * maxDistFromNode);
-      y = Math.floor(Math.random() * maxDistFromNode);
-
-      newNode = new Node(selectedNode.x + x * Math.cos(angle), selectedNode.y + y * Math.sin(angle));
-      nodes.push(newNode);
-      selectedNode.addEdges(newNode.x, newNode.y);
+      for(var j = 0; j < numNodes; j++) {
+        setNodeLocation(maxDistFromNode);
+      }
       return;
     }
   }
@@ -101,8 +111,23 @@ function mouseReleased() {
   }
 };
 
+//Find where node will be placed and add node/edge
+function setNodeLocation(maxDist) {
+  //Random angle code from: https://stackoverflow.com/a/9879291
+  angle = Math.random() * 2 * Math.PI;
+  x = Math.floor(Math.random() * maxDist);
+  y = Math.floor(Math.random() * maxDist);
+
+  newNode = new Node(selectedNode.x + x * Math.cos(angle), selectedNode.y + y * Math.sin(angle));
+  if(!newNode.checkNodeOverlap()) {
+    newNode.animateNode();
+    nodes.push(newNode);
+    selectedNode.addEdges(newNode.x, newNode.y);
+  }
+}
+
 // draw() function is called repeatedly, it's the main animation loop
 function draw() {
   background(220);
-  displayNodes(nodes);
+  displayNodes();
 }
