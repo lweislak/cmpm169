@@ -37,7 +37,7 @@ class Node {
     this.currX = Math.round(x *100)/100;
     this.currY = Math.round(y *100)/100;
   }
-}
+};
 
 function resizeScreen() {
   centerHorz = canvasContainer.width() / 2; // Adjusted for drawing logic
@@ -45,7 +45,7 @@ function resizeScreen() {
   console.log("Resizing...");
   resizeCanvas(canvasContainer.width(), canvasContainer.height());
   // redrawCanvas(); // Redraw everything based on new size
-}
+};
 
 // setup() function is called once when the program starts
 function setup() {
@@ -65,59 +65,71 @@ function setup() {
     resizeScreen();
   });
   resizeScreen();
-}
+};
 
 //Function modified from generative design
 function displayNodes() {
-
   for (var i = 0; i < nodes.length; i++) {
-    currNode = nodes[i];
+    var currNode = nodes[i];
 
-    //Draw edges
-    if(dist(currNode.currX, currNode.currY, currNode.x, currNode.y) <= 1) {
-      stroke(0, 130, 164);
-      strokeWeight(2);
-      for (var j = 0; j < currNode.edges.length; j++) {
-        line(currNode.x, currNode.y, currNode.edges[j][0], currNode.edges[j][1]);
-      }
-      currNode.currX = currNode.x; //Set final location to finish animation
-      currNode.currY = currNode.y;
+    drawEdges(currNode);
+    drawNode(currNode);
+    moveNode(currNode);
+  }
+};
+
+function drawNode(node) {
+  noStroke();
+  fill(255);
+  ellipse(node.currX, node.currY, 16, 16);
+  fill("#181818");
+  ellipse(node.currX, node.currY, 16 - 4, 16 - 4);
+};
+
+function drawEdges(node) {
+  if(dist(node.currX, node.currY, node.x, node.y) <= 1) {
+    stroke(0, 130, 164);
+    strokeWeight(2);
+    for (var j = 0; j < node.edges.length; j++) {
+      line(node.x, node.y, node.edges[j][0], node.edges[j][1]);
     }
+    node.currX = node.x; //Set final location to finish animation
+    node.currY = node.y;
+  }
+}
 
-    //Draw node
-    noStroke();
-    fill(255);
-    ellipse(currNode.currX, currNode.currY, 16, 16);
-    fill(0);
-    ellipse(currNode.currX, currNode.currY, 16 - 4, 16 - 4);
-
-    if(dist(currNode.currX, currNode.currY, currNode.x, currNode.y) > 0) {
-      //Move point along line code found at: https://stackoverflow.com/a/5995931
-      angle = Math.atan2(currNode.y - currNode.currY, currNode.x - currNode.currX);
-      currNode.setCurrentLocation(currNode.currX + Math.cos(angle), currNode.currY + Math.sin(angle));
-    }
+//Move node along edge
+function moveNode(node) {
+  if(dist(node.currX, node.currY, node.x, node.y) > 0) {
+    //Move point along line code found at: https://stackoverflow.com/a/5995931
+    //Note: Not efficient! Line is already calculated earlier in the function
+    angle = Math.atan2(node.y - node.currY, node.x - node.currX);
+    node.setCurrentLocation(node.currX + Math.cos(angle), node.currY + Math.sin(angle));
   }
 }
 
 //Function modified from generative design
 //Check if node was pressed by checking mouse location and comparing to node locations
 function mousePressed() {
-  var nodeSize = 8;
-  var maxDistFromNode = 200; //Max distance that a new node can be placed from selected node
+  nodeSize = 8;
+  maxDistFromNode = 200; //Max distance that a new node can be placed from selected node
   numNodes = Math.floor((Math.random() * 5) + 2); //Random number of nodes created (1-5)
 
   for (var i = 0; i < nodes.length; i++) { //Check all nodes
-    var checkNode = nodes[i];
-    var d = dist(mouseX, mouseY, checkNode.x, checkNode.y);
-    if (d < nodeSize) { //If node is selected, create new branching nodes
-      selectedNode = checkNode;
-      for(var j = 0; j < numNodes; j++) {
-        setNodeLocation(maxDistFromNode);
-      }
-      return;
-    }
+    checkNodeDistance(nodes[i]);
   }
 };
+
+//Helper function to check the distance from a node to the mouse pointer
+function checkNodeDistance(checkNode) {
+  var d = dist(mouseX, mouseY, checkNode.x, checkNode.y);
+  if (d < nodeSize) { //If node is selected, create new branching nodes
+    selectedNode = checkNode;
+    for(var j = 0; j < numNodes; j++) {
+      setNodeLocation(maxDistFromNode);
+    }
+  }
+}
 
 function mouseReleased() {
   if (selectedNode != null) {
@@ -134,15 +146,15 @@ function setNodeLocation(maxDist) {
 
   newNode = new Node(selectedNode.x + x * Math.cos(angle), selectedNode.y + y * Math.sin(angle));
 
-  if(!newNode.checkNodeOverlap()) {
+  if(!newNode.checkNodeOverlap()) { //If there is no overlap, add node to the array
     nodes.push(newNode);
     selectedNode.addEdges(newNode.x, newNode.y);
     newNode.setCurrentLocation(selectedNode.x, selectedNode.y);
   }
-}
+};
 
 // draw() function is called repeatedly, it's the main animation loop
 function draw() {
-  background(220);
+  background(0);
   displayNodes();
-}
+};
