@@ -2,7 +2,7 @@
 // Author: Lo Weislak
 // Date: 1/20/25
 
-//Code for functions displayNodes and mousePressed found at:
+//Inspiration and starting code for functions displayNodes and mousePressed found at:
 //http://www.generative-gestaltung.de/2/sketches/?02_M/M_6_1_03
 
 
@@ -49,11 +49,9 @@ function resizeScreen() {
 
 // setup() function is called once when the program starts
 function setup() {
-  // place our canvas, making it fit our container
   canvasContainer = $("#canvas-container");
   let canvas = createCanvas(canvasContainer.width(), canvasContainer.height());
   canvas.parent("canvas-container");
-  // resize canvas is the page is resized
 
   nodes = [];
   node = new Node(canvas.width/2, canvas.height/2);
@@ -93,20 +91,19 @@ function drawEdges(node) {
     for (var j = 0; j < node.edges.length; j++) {
       line(node.x, node.y, node.edges[j][0], node.edges[j][1]);
     }
-    node.currX = node.x; //Set final location to finish animation
-    node.currY = node.y;
+    node.setCurrentLocation(node.x, node.y);  //Set final location to finish animation
   }
-}
+};
 
 //Move node along edge
 function moveNode(node) {
   if(dist(node.currX, node.currY, node.x, node.y) > 0) {
     //Move point along line code found at: https://stackoverflow.com/a/5995931
-    //Note: Not efficient! Line is already calculated earlier in the function
+    //Note: Not efficient! Line is already calculated earlier in the drawEdges() function
     angle = Math.atan2(node.y - node.currY, node.x - node.currX);
     node.setCurrentLocation(node.currX + Math.cos(angle), node.currY + Math.sin(angle));
   }
-}
+};
 
 //Function modified from generative design
 //Check if node was pressed by checking mouse location and comparing to node locations
@@ -129,7 +126,7 @@ function checkNodeDistance(checkNode) {
       setNodeLocation(maxDistFromNode);
     }
   }
-}
+};
 
 function mouseReleased() {
   if (selectedNode != null) {
