@@ -2,27 +2,56 @@
 // Author: Your Name
 // Date:
 
-// Here is how you might set up an OOP p5.js project
-// Note that p5.js looks for a file called sketch.js
+//Perlin noise code tutorial found at: https://www.youtube.com/watch?v=BjoM9oKOAKY
 
-// Constants - User-servicable parts
-// In a longer project I like to put these in a separate file
-const VALUE1 = 1;
-const VALUE2 = 2;
 
 // Globals
-let myInstance;
 let canvasContainer;
 var centerHorz, centerVert;
 
-class MyClass {
-    constructor(param1, param2) {
-        this.property1 = param1;
-        this.property2 = param2;
+var inc = 0.1;
+var scl = 10;
+var cols, rows;
+var zoff = 0;
+var fr;
+var particles = [];
+var flowfield;
+
+class Particle {
+    constructor() {
+      this.pos = createVector(random(width), random(height));
+      this.vel = createVector(0,0);
+      this.acc = createVector(0,0);
     }
 
-    myMethod() {
-        // code to run when method is called
+    update() {
+      this.vel.add(this.acc);
+      this.pos.add(this.vel);
+      this.acc.mult(0);
+    }
+
+    follow(vectors) {
+      var x = floor(this.pos.x /scl);
+      var y = floor(this.pos.y /scl);
+      var index = x + y * cols;
+      var force = vectors[index];
+      this.applyForce(force);
+    }
+
+    edges() {
+      if(this.pos.x > width) this.pos.x = 0;
+      if(this.pos.x < 0) this.pos.x = width;
+      if(this.pos.y > height) this.pos.y = 0;
+      if(this.pos.y < 0) this.pos.y = height;
+    }
+
+    applyForce(force) {
+      this.acc.add(force);
+    }
+
+    show() {
+      stroke(0);
+      point(this.pos.x, this.pos.y);
     }
 }
 
@@ -36,44 +65,53 @@ function resizeScreen() {
 
 // setup() function is called once when the program starts
 function setup() {
-  // place our canvas, making it fit our container
   canvasContainer = $("#canvas-container");
   let canvas = createCanvas(canvasContainer.width(), canvasContainer.height());
   canvas.parent("canvas-container");
-  // resize canvas is the page is resized
-
-  // create an instance of the class
-  myInstance = new MyClass("VALUE1", "VALUE2");
 
   $(window).resize(function() {
     resizeScreen();
   });
   resizeScreen();
+
+  cols = floor(canvasContainer.width() / scl);
+  rows = floor(canvasContainer.height() / scl);
+  fr = createP('');
+  flowfield = new Array(cols * rows);
+  for (var i = 0; i < canvasContainer.width()/2; i++) {
+    particles[i] = new Particle();
+  }
+  background(51);  
 }
 
 // draw() function is called repeatedly, it's the main animation loop
 function draw() {
-  background(220);    
-  // call a method on the instance
-  myInstance.myMethod();
+  var yoff = 0;
+  for (var y = 0; y < rows; y++) {
+    var xoff = 0;
+    for (var x = 0; x < cols; x++) {
+      var index = x + y * cols;
+      var angle = noise(xoff, yoff, zoff) * TWO_PI * 4;
+      var v = p5.Vector.fromAngle(angle);
+      v.setMag(1);
+      flowfield[index] = v;
+      xoff += inc;
+      stroke(0, 50);
+      // push();
+      // translate(x * scl, y * scl);
+      // rotate(v.heading());
+      // strokeWeight(1);
+      // line(0, 0, scl, 0);
+      // pop();
+    }
+    yoff += inc;
+    zoff += 0.0003;
+  }
 
-  // Set up rotation for the rectangle
-  push(); // Save the current drawing context
-  translate(centerHorz, centerVert); // Move the origin to the rectangle's center
-  rotate(frameCount / 100.0); // Rotate by frameCount to animate the rotation
-  fill(234, 31, 81);
-  noStroke();
-  rect(-125, -125, 250, 250); // Draw the rectangle centered on the new origin
-  pop(); // Restore the original drawing context
-
-  // The text is not affected by the translate and rotate
-  fill(255);
-  textStyle(BOLD);
-  textSize(140);
-  text("p5*", centerHorz - 105, centerVert + 40);
-}
-
-// mousePressed() function is called once after every time a mouse button is pressed
-function mousePressed() {
-    // code to run when mouse is pressed
+  for (var i = 0; i < particles.length; i++) {
+    particles[i].follow(flowfield);
+    particles[i].update();
+    particles[i].edges();
+    particles[i].show();
+  }
 }
