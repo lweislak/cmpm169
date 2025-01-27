@@ -1,57 +1,132 @@
 // sketch.js - purpose and description here
-// Author: Your Name
-// Date:
+// Author: Lo Weislak
+// Date: 1/27/25
 
-//Perlin noise code tutorial found at: https://www.youtube.com/watch?v=BjoM9oKOAKY
+//Flocking sim tutorial using Boids found at: https://www.youtube.com/watch?v=mhjuuHl6qHM
 
+//Possible refactoring: Take snapshot of each particles' current velocity and flock using that snapshot in update()
+//Possible refactoring: Subdivison/quadtree
+//Possible ideas: Particle can only see a specific "view", obstacles
 
 // Globals
 let canvasContainer;
 var centerHorz, centerVert;
 
-var inc = 0.1;
-var scl = 10;
-var cols, rows;
-var zoff = 0;
-var fr;
-var particles = [];
-var flowfield;
+var flock = [];
 
 class Particle {
     constructor() {
-      this.pos = createVector(random(width), random(height));
-      this.vel = createVector(0,0);
-      this.acc = createVector(0,0);
-    }
-
-    update() {
-      this.vel.add(this.acc);
-      this.pos.add(this.vel);
-      this.acc.mult(0);
-    }
-
-    follow(vectors) {
-      var x = floor(this.pos.x /scl);
-      var y = floor(this.pos.y /scl);
-      var index = x + y * cols;
-      var force = vectors[index];
-      this.applyForce(force);
-    }
-
-    edges() {
-      if(this.pos.x > width) this.pos.x = 0;
-      if(this.pos.x < 0) this.pos.x = width;
-      if(this.pos.y > height) this.pos.y = 0;
-      if(this.pos.y < 0) this.pos.y = height;
-    }
-
-    applyForce(force) {
-      this.acc.add(force);
+      this.position = createVector(random(width), random(height));
+      this.velocity = p5.Vector.random2D();
+      this.velocity.setMag(2, 4); //Moves particles at different speeds
+      this.acceleration = createVector(0,0);
+      this.maxForce = 0.2;
+      this.maxSpeed = 4;
     }
 
     show() {
-      stroke(0);
-      point(this.pos.x, this.pos.y);
+      strokeWeight(8);
+      stroke(255);
+      point(this.position.x, this.position.y);
+    }
+
+    update() {
+      this.position.add(this.velocity);
+      this.velocity.add(this.acceleration);
+      this.velocity.limit(this.maxSpeed);
+      this.acceleration.set(0,0); //Reset acceleration
+    }
+    
+    flock(particles) {
+      let alignment = this.align(particles);
+      let cohesion = this.cohesion(particles);
+      let separation = this.separation(particles);
+      this.acceleration.add(separation);
+      this.acceleration.add(alignment); //Force accumulation
+      this.acceleration.add(cohesion);
+    }
+
+    //Wrap particles around screen
+    edges() {
+      if (this.position.x > width) {
+        this.position.x = 0;
+      } else if (this.position.x < 0) {
+        this.position.x = width;
+      }
+
+      if (this.position.y > height) {
+        this.position.y = 0;
+      } else if (this.position.y < 0) {
+        this.position.y = height;
+      }
+    }
+
+    //TODO: Refactor!
+    //Align particle with other local particles
+    align(particles) {
+      let radius = 50;
+      let total = 0;
+      let steeringForce = createVector();
+      for (let other of particles) {
+        let d = dist(this.position.x, this.position.y, other.position.x, other.position.y);
+        if(other != this && d < radius) {
+          steeringForce.add(other.velocity);
+          total++;
+        }
+      }
+      if (total > 0) {
+        steeringForce.div(total);
+        steeringForce.setMag(this.maxSpeed);
+        steeringForce.sub(this.velocity);
+        steeringForce.limit(this.maxForce);
+      }
+      return steeringForce;
+    }
+
+    //TODO: Refactor!
+    //Steer particles in direction of local particles
+    cohesion(particles) {
+      let radius = 50;
+      let total = 0;
+      let steeringForce = createVector();
+      for (let other of particles) {
+        let d = dist(this.position.x, this.position.y, other.position.x, other.position.y);
+        if(other != this && d < radius) {
+          steeringForce.add(other.position);
+          total++;
+        }
+      }
+      if (total > 0) {
+        steeringForce.div(total);
+        steeringForce.sub(this.position);
+        steeringForce.setMag(this.maxSpeed);
+        steeringForce.sub(this.velocity);
+        steeringForce.limit(this.maxForce);
+      }
+      return steeringForce;
+    }
+
+    //TODO: Refactor!
+    separation(particles) {
+      let radius = 50;
+      let total = 0;
+      let steeringForce = createVector();
+      for (let other of particles) {
+        let d = dist(this.position.x, this.position.y, other.position.x, other.position.y);
+        if(other != this && d < radius) {
+          let difference = p5.Vector.sub(this.position, other.position);
+          difference.div(d**2); //The farther away a particle is, the lower the magnitude
+          steeringForce.add(difference);
+          total++;
+        }
+      }
+      if (total > 0) {
+        steeringForce.div(total);
+        steeringForce.setMag(this.maxSpeed);
+        steeringForce.sub(this.velocity);
+        steeringForce.limit(this.maxForce);
+      }
+      return steeringForce;
     }
 }
 
@@ -74,44 +149,19 @@ function setup() {
   });
   resizeScreen();
 
-  cols = floor(canvasContainer.width() / scl);
-  rows = floor(canvasContainer.height() / scl);
-  fr = createP('');
-  flowfield = new Array(cols * rows);
-  for (var i = 0; i < canvasContainer.width()/2; i++) {
-    particles[i] = new Particle();
+  for(var i = 0; i < 100; i++) {
+    flock.push(new Particle());
   }
-  background(51);  
 }
 
 // draw() function is called repeatedly, it's the main animation loop
 function draw() {
-  var yoff = 0;
-  for (var y = 0; y < rows; y++) {
-    var xoff = 0;
-    for (var x = 0; x < cols; x++) {
-      var index = x + y * cols;
-      var angle = noise(xoff, yoff, zoff) * TWO_PI * 4;
-      var v = p5.Vector.fromAngle(angle);
-      v.setMag(1);
-      flowfield[index] = v;
-      xoff += inc;
-      stroke(0, 50);
-      // push();
-      // translate(x * scl, y * scl);
-      // rotate(v.heading());
-      // strokeWeight(1);
-      // line(0, 0, scl, 0);
-      // pop();
-    }
-    yoff += inc;
-    zoff += 0.0003;
-  }
+  background(51);
 
-  for (var i = 0; i < particles.length; i++) {
-    particles[i].follow(flowfield);
-    particles[i].update();
-    particles[i].edges();
-    particles[i].show();
+  for(let particle of flock) {
+    particle.edges();
+    particle.flock(flock);
+    particle.update();
+    particle.show();
   }
 }
