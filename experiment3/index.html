@@ -54,13 +54,13 @@
 			<div class="minor-section">
 				<h2>Technical</h2>
 				<p>
-					The code utilized <a href="https://eater.net/boids">Boid's Flocking Algorithm</a> which has three rules: coherence, separation, and alignment.
+					The code utilizes <a href="https://eater.net/boids">Boid's Flocking Algorithm</a> which has three rules: coherence, separation, and alignment.
 					Essentially particles will gradually move towards other particles, will not completely overlap with other particles,
-					and try to move in the same direction speed as other particles.
-					The particles have a radius around them that will apply the three rules depending on particles that are inside of it.
+					and try to move in the same direction and speed as other particles.
+					The particles have a radius around them that will apply the three rules depending on other particles that are inside of it.
 				</p>
 				<p>
-					Each of the three rules has their own function. Each snow particle is an object which has a position, velocity, and acceleration. These variables
+					Each of the three rules has their own class function. Each snow particle is an object which has a position, velocity, and acceleration. These variables
 					are what directly control the particles because they are used in each of the functions to calculate the steering force (how the particles are moved)
 					which is then applied to the acceleration in order to move it (force accumulation).
 				</p>
@@ -69,7 +69,7 @@
 			<div class="minor-section">
 				<h2>Reflection</h2>
 				<p>
-					I flip flopped around with different ideas. At first I wanted to persue using noise since I had never worked with it before,
+					I flip flopped around with different ideas. At first I wanted to pursue using noise since I had never worked with it before,
 					but I didn't have any inspiration and felt it wasn't worth the trouble. I then pivoted to utilizing the flocking algorithm.	
 					After implementing the basic tutorial found <a href="https://www.youtube.com/watch?v=mhjuuHl6qHM">here</a> 
 					I noticed that the result looked like falling snow and I ended up running with that idea.
