@@ -45,17 +45,43 @@
 
 			<div class="minor-section">
 				<h2>Description</h2>
-				<p>What are you trying to acomplish with this experiment?</p>
+				<p>
+					I wanted to recreate a snow storm. The swirling snow moves in all different directions and particles can clump together and break away.
+					The slower a particle is moving, the darker the color will be. This gives the snow dimension and makes some particles seem farther away.
+				</p>
 			</div>
 
 			<div class="minor-section">
 				<h2>Technical</h2>
-				<p>Describe in detail what you did technically and how it works?</p>
+				<p>
+					The code utilized <a href="https://eater.net/boids">Boid's Flocking Algorithm</a> which has three rules: coherence, separation, and alignment.
+					Essentially particles will gradually move towards other particles, will not completely overlap with other particles,
+					and try to move in the same direction speed as other particles.
+					The particles have a radius around them that will apply the three rules depending on particles that are inside of it.
+				</p>
+				<p>
+					Each of the three rules has their own function. Each snow particle is an object which has a position, velocity, and acceleration. These variables
+					are what directly control the particles because they are used in each of the functions to calculate the steering force (how the particles are moved)
+					which is then applied to the acceleration in order to move it (force accumulation).
+				</p>
 			</div>
 
 			<div class="minor-section">
 				<h2>Reflection</h2>
-				<p>Each person that worked on the code should reflect on the process, the difficulties, and the successes of the experiment.</p>
+				<p>
+					I flip flopped around with different ideas. At first I wanted to persue using noise since I had never worked with it before,
+					but I didn't have any inspiration and felt it wasn't worth the trouble. I then pivoted to utilizing the flocking algorithm.	
+					After implementing the basic tutorial found <a href="https://www.youtube.com/watch?v=mhjuuHl6qHM">here</a> 
+					I noticed that the result looked like falling snow and I ended up running with that idea.
+				</p>
+				<p>
+					The greatest difficulty was finding a good algorithm to determine the color. I tried many methods, some of my own and some I found online,
+					before settling on one that I think achieved the look I was envisioning.
+				</p>
+				<p>
+					I like the 3-dimensional look that the greyscale particles have. At first I was going to use other colors, but it was annoying to convert the 
+					distance floats into hex codes so I decided to lean fully into the snow idea. Overall, I think it was a good choice.
+				</p>
 			</div>
 
 		</section>
