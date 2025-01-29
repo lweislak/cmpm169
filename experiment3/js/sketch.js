@@ -1,10 +1,10 @@
-// sketch.js - purpose and description here
+// sketch.js - Depict a snowstorm using Boid's flocking algorithm
 // Author: Lo Weislak
 // Date: 1/27/25
 
 //Flocking sim tutorial using Boids found at: https://www.youtube.com/watch?v=mhjuuHl6qHM
 
-//Possible refactoring: Take snapshot of each particles' current velocity and flock using that snapshot in update()
+//Possible refactoring: Take snapshot of each particle's current velocity and flock using that snapshot in update()
 //Possible refactoring: Subdivison/quadtree
 //Possible ideas: Particle can only see a specific "view", obstacles
 
@@ -21,7 +21,7 @@ class Particle {
       this.velocity.setMag(2, 4); //Moves particles at different speeds
       this.acceleration = createVector(0,0);
       this.maxForce = 0.2;
-      this.maxSpeed = 8;
+      this.maxSpeed = 7;
       this.color = "black";
     }
 
@@ -32,11 +32,9 @@ class Particle {
       point(this.position.x, this.position.y);
     }
 
+    //Calculate particle's color based on their speed (magnitude of velocity vector)
+    //Color in greyscale
     setColor() {
-      //Particles have good range of black and white
-      //return(Math.abs(Math.round((this.velocity.x/this.velocity.y)*100)));
-
-      //Calculate particles based on their speed (magnitude of velocity vector)
       this.color = Math.round((Math.sqrt(this.velocity.x**2 + this.velocity.y**2)) * 30);
     }
 
@@ -135,7 +133,6 @@ function setup() {
 }
 
 function draw() {
-  //background(51);
   background("#425675"); //Light blue-ish grey
 
   for(let particle of flock) {
