@@ -21,18 +21,23 @@ class Particle {
       this.velocity.setMag(2, 4); //Moves particles at different speeds
       this.acceleration = createVector(0,0);
       this.maxForce = 0.2;
-      this.maxSpeed = 7;
+      this.maxSpeed = 8;
+      this.color = "black";
     }
 
-    show(color) {
+    show() {
+      this.setColor();
       strokeWeight(8);
-      //stroke(255);
-      stroke(color);
+      stroke(this.color);
       point(this.position.x, this.position.y);
     }
 
-    checkColor() {
+    setColor() {
+      //Particles have good range of black and white
+      //return(Math.abs(Math.round((this.velocity.x/this.velocity.y)*100)));
 
+      //Calculate particles based on their speed (magnitude of velocity vector)
+      this.color = Math.round((Math.sqrt(this.velocity.x**2 + this.velocity.y**2)) * 30);
     }
 
     update() {
@@ -49,10 +54,6 @@ class Particle {
       this.acceleration.add(separation);
       this.acceleration.add(alignment); //Force accumulation
       this.acceleration.add(cohesion);
-
-      //console.log(Math.abs(Math.round((this.velocity.x + this.velocity.y)*100)));
-
-      return(Math.abs(Math.round((this.velocity.x + this.velocity.y)*100)));
     }
 
     //Wrap particles around screen
@@ -71,7 +72,7 @@ class Particle {
     }
 
     getSteeringForce(particles, rule) {
-      let radius = 20;
+      let radius = 30;
       let total = 0;
       let steeringForce = createVector();
       for (let other of particles) {
@@ -97,76 +98,6 @@ class Particle {
       return steeringForce;
     }
 
-    /*
-    //TODO: Refactor!
-    //Align particle with other local particles
-    align(particles) {
-      let radius = 50;
-      let total = 0;
-      let steeringForce = createVector();
-      for (let other of particles) {
-        let d = dist(this.position.x, this.position.y, other.position.x, other.position.y);
-        if(other != this && d < radius) {
-          steeringForce.add(other.velocity);
-          total++;
-        }
-      }
-      if (total > 0) {
-        steeringForce.div(total);
-        steeringForce.setMag(this.maxSpeed);
-        steeringForce.sub(this.velocity);
-        steeringForce.limit(this.maxForce);
-      }
-      return steeringForce;
-    }
-
-    //TODO: Refactor!
-    //Steer particles in direction of local particles
-    cohesion(particles) {
-      let radius = 50;
-      let total = 0;
-      let steeringForce = createVector();
-      for (let other of particles) {
-        let d = dist(this.position.x, this.position.y, other.position.x, other.position.y);
-        if(other != this && d < radius) {
-          steeringForce.add(other.position);
-          total++;
-        }
-      }
-      if (total > 0) {
-        steeringForce.div(total);
-        steeringForce.sub(this.position);
-        steeringForce.setMag(this.maxSpeed);
-        steeringForce.sub(this.velocity);
-        steeringForce.limit(this.maxForce);
-      }
-      return steeringForce;
-    }
-
-    //TODO: Refactor!
-    separation(particles) {
-      let radius = 50;
-      let total = 0;
-      let steeringForce = createVector();
-      for (let other of particles) {
-        let d = dist(this.position.x, this.position.y, other.position.x, other.position.y);
-        if(other != this && d < radius) {
-          let difference = p5.Vector.sub(this.position, other.position);
-          difference.div(d**2); //The farther away a particle is, the lower the magnitude
-          steeringForce.add(difference);
-          total++;
-        }
-      }
-      if (total > 0) {
-        steeringForce.div(total);
-        steeringForce.setMag(this.maxSpeed);
-        steeringForce.sub(this.velocity);
-        steeringForce.limit(this.maxForce);
-      }
-      return steeringForce;
-    }
-    */
-
     align(particles) {
       return(this.getSteeringForce(particles, "align"));
     }
@@ -188,7 +119,6 @@ function resizeScreen() {
   // redrawCanvas(); // Redraw everything based on new size
 }
 
-// setup() function is called once when the program starts
 function setup() {
   canvasContainer = $("#canvas-container");
   let canvas = createCanvas(canvasContainer.width(), canvasContainer.height());
@@ -204,15 +134,14 @@ function setup() {
   }
 }
 
-// draw() function is called repeatedly, it's the main animation loop
 function draw() {
   //background(51);
-  background("#0080ff");
+  background("#425675"); //Light blue-ish grey
 
   for(let particle of flock) {
     particle.edges();
-    testColor = particle.flock(flock);
+    particle.flock(flock);
     particle.update();
-    particle.show(testColor);
+    particle.show();
   }
 }
