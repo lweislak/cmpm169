@@ -43,28 +43,30 @@ class Ball {
 }
 
 class Chime {
-  constructor() {
-    this.position = createVector(random(width), random(height)); //TODO: Replace with passed in vars
+  constructor(x, y) {
+    this.position = createVector(x, y);
+    this.height = 200;
+    this.width = 80;
   }
 
-  //TODO: Use begin/end shape
   display() {
     strokeWeight(1);
-    var x = 600; //TEST
-    let y = 200
-    /*
-    ellipse(x, y, 80, 20); //x, y, width, height
-    line((x-80/2), y, (x-80/2), (y+200)); //left side
-    line((x-80/2), (y+200), (x+80/2), (y+150)); //bottom
-    line((x+80/2), (y+150), (x+80/2), y); //right side
-    */
-   beginShape();
-   vertex(x-80/2, y);
-   vertex(x-80/2, y+200);
-   vertex(x+80/2, y+170);
-   vertex(x+80/2, y);
-   endShape();
-   ellipse(x, y, 80, 20); //x, y, width, height
+    let radius = this.width/2;
+
+    //Draw chime
+    beginShape();
+    vertex(this.position.x - radius, this.position.y);
+    vertex(this.position.x - radius, this.position.y + this.height);
+    vertex(this.position.x + radius, this.position.y + this.height - 30);
+    vertex(this.position.x + radius, this.position.y);
+    endShape();
+    ellipse(this.position.x, this.position.y, this.width, 10); //Draw top of chime
+    line(this.position.x, this.position.y, this.position.x, 0); //Draw string
+  }
+
+  //Check if chime has been pressed
+  checkClick() {
+
   }
 }
 
@@ -93,17 +95,21 @@ function setup() {
     balls.push(new Ball());
   }
 
-  testChime = new Chime(); //TEST
+  testChime = new Chime(600, 200); //TEST
+  testChime2 = new Chime(900, 350);
 }
 
 // draw() function is called repeatedly, it's the main animation loop
 function draw() {
   background(220);
 
+  /*
   for (ball of balls) {
     ball.update();
     ball.display();
   }
+  */
 
   testChime.display(); //TEST
+  testChime2.display();
 }
