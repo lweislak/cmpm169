@@ -52,10 +52,19 @@ class Chime {
     strokeWeight(1);
     var x = 600; //TEST
     let y = 200
+    /*
     ellipse(x, y, 80, 20); //x, y, width, height
     line((x-80/2), y, (x-80/2), (y+200)); //left side
     line((x-80/2), (y+200), (x+80/2), (y+150)); //bottom
     line((x+80/2), (y+150), (x+80/2), y); //right side
+    */
+   beginShape();
+   vertex(x-80/2, y);
+   vertex(x-80/2, y+200);
+   vertex(x+80/2, y+170);
+   vertex(x+80/2, y);
+   endShape();
+   ellipse(x, y, 80, 20); //x, y, width, height
   }
 }
 
