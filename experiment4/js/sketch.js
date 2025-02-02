@@ -1,29 +1,45 @@
 // sketch.js - purpose and description here
-// Author: Your Name
-// Date:
-
-// Here is how you might set up an OOP p5.js project
-// Note that p5.js looks for a file called sketch.js
-
-// Constants - User-servicable parts
-// In a longer project I like to put these in a separate file
-const VALUE1 = 1;
-const VALUE2 = 2;
+// Author: Lo Weislak
+// Date: 2/3/25
 
 // Globals
-let myInstance;
 let canvasContainer;
 var centerHorz, centerVert;
 
-class MyClass {
-    constructor(param1, param2) {
-        this.property1 = param1;
-        this.property2 = param2;
-    }
+class Ball {
+  constructor() {
+    this.position = createVector(random(width), random(height));
+    this.velocity = p5.Vector.random2D();
+    this.velocity.setMag(2, 4); //Moves particles at different speeds
+    this.acceleration = createVector(0,0);
+    this.radius = 8;
+    this.color = "black";
+    //this.maxSpeed = 10;
+  }
 
-    myMethod() {
-        // code to run when method is called
+  show() {
+    strokeWeight(8);
+    stroke("black");
+    point(this.position.x, this.position.y);
+  }
+
+  update() {
+    this.position.add(this.velocity);
+    this.velocity.add(this.acceleration);
+    //this.velocity.limit(this.maxSpeed);
+    this.acceleration.set(0,0); //Reset acceleration
+    this.checkCollision();
+  }
+    
+  //Check for wall collision
+  checkCollision() {
+    if (this.position.x + this.radius > canvasContainer.width() || this.position.x - this.radius < 0) {
+      this.velocity.x = this.velocity.x * -1;
     }
+    if (this.position.y + this.radius > canvasContainer.height() || this.position.y - this.radius < 0) {
+      this.velocity.y = this.velocity.y * -1;
+    }
+  }
 }
 
 function resizeScreen() {
@@ -34,7 +50,6 @@ function resizeScreen() {
   // redrawCanvas(); // Redraw everything based on new size
 }
 
-// setup() function is called once when the program starts
 function setup() {
   // place our canvas, making it fit our container
   canvasContainer = $("#canvas-container");
@@ -42,38 +57,23 @@ function setup() {
   canvas.parent("canvas-container");
   // resize canvas is the page is resized
 
-  // create an instance of the class
-  myInstance = new MyClass("VALUE1", "VALUE2");
-
   $(window).resize(function() {
     resizeScreen();
   });
   resizeScreen();
+
+  balls = [];
+  for (var i = 0; i < 10; i++) {
+    balls.push(new Ball());
+  }
 }
 
 // draw() function is called repeatedly, it's the main animation loop
 function draw() {
-  background(220);    
-  // call a method on the instance
-  myInstance.myMethod();
+  background(220);
 
-  // Set up rotation for the rectangle
-  push(); // Save the current drawing context
-  translate(centerHorz, centerVert); // Move the origin to the rectangle's center
-  rotate(frameCount / 100.0); // Rotate by frameCount to animate the rotation
-  fill(234, 31, 81);
-  noStroke();
-  rect(-125, -125, 250, 250); // Draw the rectangle centered on the new origin
-  pop(); // Restore the original drawing context
-
-  // The text is not affected by the translate and rotate
-  fill(255);
-  textStyle(BOLD);
-  textSize(140);
-  text("p5*", centerHorz - 105, centerVert + 40);
-}
-
-// mousePressed() function is called once after every time a mouse button is pressed
-function mousePressed() {
-    // code to run when mouse is pressed
+  for (ball of balls) {
+    ball.update();
+    ball.show();
+  }
 }
