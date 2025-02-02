@@ -6,47 +6,12 @@
 let canvasContainer;
 var centerHorz, centerVert;
 
-class Ball {
-  constructor() {
-    this.position = createVector(random(width), random(height));
-    this.velocity = p5.Vector.random2D();
-    this.velocity.setMag(2, 4); //Moves particles at different speeds
-    this.acceleration = createVector(0,0);
-    this.radius = 8;
-    this.color = "black";
-    //this.maxSpeed = 10;
-  }
-
-  display() {
-    strokeWeight(8);
-    stroke("black");
-    point(this.position.x, this.position.y);
-  }
-
-  update() {
-    this.position.add(this.velocity);
-    this.velocity.add(this.acceleration);
-    //this.velocity.limit(this.maxSpeed);
-    this.acceleration.set(0,0); //Reset acceleration
-    this.checkCollision();
-  }
-    
-  //Check for wall collision
-  checkCollision() {
-    if (this.position.x + this.radius > width || this.position.x - this.radius < 0) {
-      this.velocity.x = this.velocity.x * -1;
-    }
-    if (this.position.y + this.radius > height || this.position.y - this.radius < 0) {
-      this.velocity.y = this.velocity.y * -1;
-    }
-  }
-}
-
 class Chime {
   constructor(x, y) {
     this.position = createVector(x, y);
     this.height = 200;
     this.width = 80;
+    this.sound = loadSound('./sounds/chimes-7.wav');
   }
 
   display() {
@@ -90,26 +55,17 @@ function setup() {
   });
   resizeScreen();
 
-  balls = [];
-  for (var i = 0; i < 10; i++) {
-    balls.push(new Ball());
-  }
-
   testChime = new Chime(600, 200); //TEST
   testChime2 = new Chime(900, 350);
 }
 
-// draw() function is called repeatedly, it's the main animation loop
 function draw() {
   background(220);
 
-  /*
-  for (ball of balls) {
-    ball.update();
-    ball.display();
-  }
-  */
-
   testChime.display(); //TEST
   testChime2.display();
+}
+
+function mousePressed() {
+  testChime.sound.play(); //TEST
 }
