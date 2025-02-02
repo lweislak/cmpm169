@@ -17,7 +17,7 @@ class Ball {
     //this.maxSpeed = 10;
   }
 
-  show() {
+  display() {
     strokeWeight(8);
     stroke("black");
     point(this.position.x, this.position.y);
@@ -33,12 +33,29 @@ class Ball {
     
   //Check for wall collision
   checkCollision() {
-    if (this.position.x + this.radius > canvasContainer.width() || this.position.x - this.radius < 0) {
+    if (this.position.x + this.radius > width || this.position.x - this.radius < 0) {
       this.velocity.x = this.velocity.x * -1;
     }
-    if (this.position.y + this.radius > canvasContainer.height() || this.position.y - this.radius < 0) {
+    if (this.position.y + this.radius > height || this.position.y - this.radius < 0) {
       this.velocity.y = this.velocity.y * -1;
     }
+  }
+}
+
+class Chime {
+  constructor() {
+    this.position = createVector(random(width), random(height)); //TODO: Replace with passed in vars
+  }
+
+  //TODO: Use begin/end shape
+  display() {
+    strokeWeight(1);
+    var x = 600; //TEST
+    let y = 200
+    ellipse(x, y, 80, 20); //x, y, width, height
+    line((x-80/2), y, (x-80/2), (y+200)); //left side
+    line((x-80/2), (y+200), (x+80/2), (y+150)); //bottom
+    line((x+80/2), (y+150), (x+80/2), y); //right side
   }
 }
 
@@ -66,6 +83,8 @@ function setup() {
   for (var i = 0; i < 10; i++) {
     balls.push(new Ball());
   }
+
+  testChime = new Chime(); //TEST
 }
 
 // draw() function is called repeatedly, it's the main animation loop
@@ -74,6 +93,8 @@ function draw() {
 
   for (ball of balls) {
     ball.update();
-    ball.show();
+    ball.display();
   }
+
+  testChime.display(); //TEST
 }
