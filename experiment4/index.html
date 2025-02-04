@@ -47,17 +47,43 @@
 
 			<div class="minor-section">
 				<h2>Description</h2>
-				<p>What are you trying to acomplish with this experiment?</p>
+				<p>
+					I wanted to create aesthetically pleasing wind chimes that play a sound and glow when clicked on.
+					The heights and colors of the chimes are generated at random.
+				</p>
+				<p>
+					I also added fireflies in the background to add to the ambiance and create a outdoor garden atmosphere.
+				</p>
+
 			</div>
 
 			<div class="minor-section">
 				<h2>Technical</h2>
-				<p>Describe in detail what you did technically and how it works?</p>
+				<p>
+					The wind chimes are all class objects that contain their position, color, and unique chime sound effect. 
+					I used beginShape and endShape to draw the chimes and fill in their respective colors.
+					They are also spread out evenly across the x-axis using this function: (scale*0.5)+spacing+(i-1)*(scale+spacing),
+					where scale = padding - spacing - (spacing / numberOfChimes) and i is the current number of chimes.
+				</p>
+				<p>
+					The fireflies use some of the same code from Experiment 3, like looping particles around the edges of the screen and movement.
+					They also draw from <a href="https://editor.p5js.org/dt2307/sketches/NAaFMQ7hc">this</a> project that I found. They blink at different rates and have varying brightness.
+				</p>
 			</div>
 
 			<div class="minor-section">
 				<h2>Reflection</h2>
-				<p>Each person that worked on the code should reflect on the process, the difficulties, and the successes of the experiment.</p>
+				<p>
+					I worked on this experiment by myself and used code from all credited sources. Overall, I am very happy with the result from the experiment. 
+					Like the previous experiment, I ended up pivoting early on once I found a more inspiring work. One highlight of the process was getting the blur effect to work as intended. 
+					It seemed too simple and obvious to work at the time and was surprised to see that it worked just like I wanted it to.
+				</p>
+				<p>
+					One small difficulty was drawing the chimes during my first iteration by using the line() function. 
+					I had tried to draw them this way before I switched to using beginShape() and endShape(). 
+					Trying to figure out the vertices and making it look right took a lot of trial and error.
+					In the end I’m glad I switched since I knew I would have difficulty filling in the shapes with unique colors if I was only using line().
+				</p>
 			</div>
 
 		</section>
