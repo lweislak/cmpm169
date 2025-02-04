@@ -8,6 +8,62 @@
 let canvasContainer;
 var centerHorz, centerVert;
 let chimes = [];
+let fireflies = [];
+const numOfChimes = 6;
+const numOfFireflies = 20;
+
+
+//Blink and display firefly functions taken from: https://editor.p5js.org/dt2307/sketches/NAaFMQ7hc
+//The rest of the class is adapted from the Experiment 3 Particle class
+class Firefly {
+  constructor() {
+    this.position = createVector(random(width), random(height));
+    this.brightness = random(150, 255);
+    this.blinkRate = random(0.03, 0.05);
+    this.radius = 8;
+    this.velocity = p5.Vector.random2D();
+    this.velocity.setMag(1.5, 4); //Moves particles at different speeds
+  }
+
+  update() {
+    this.position.add(this.velocity);
+  }
+
+  //Wrap particles around screen
+  edges() {
+    if (this.position.x > width) {
+      this.position.x = 0;
+    } else if (this.position.x < 0) {
+      this.position.x = width;
+    }
+
+    if (this.position.y > height) {
+      this.position.y = 0;
+    } else if (this.position.y < 0) {
+      this.position.y = height;
+    }
+  }
+
+  blink() {
+    // Update brightness for blinking effect
+    this.brightness += sin(frameCount * this.blinkRate) * 5;
+    this.brightness = constrain(this.brightness, 150, 255);
+  }
+
+  display() {
+    noStroke();
+    let glowSize = this.size * 2;
+    let alpha = map(this.brightness, 150, 255, 50, 150);
+
+    // Draw firefly with layered glow effect
+    fill(255, 255, 150, alpha * 0.3);
+    ellipse(this.position.x, this.position.y, glowSize, glowSize);
+    fill(255, 255, 150, alpha * 0.7);
+    ellipse(this.position.x, this.position.y, this.radius * 1.5, this.radius * 1.5);
+    fill(255, 255, 150, alpha);
+    ellipse(this.position.x, this.position.y, this.radius, this.radius);
+  }
+}
 
 class Chime {
   constructor(x, sound) {
@@ -17,7 +73,7 @@ class Chime {
     this.sound = loadSound(sound);
     this.color = color(random(255), random(255), random(255)); //Get random rgb color
 
-    this.glowRadius = 0; //TEST
+    this.glowRadius = 0;
     this.maxGlowRadius = 200;
   }
 
@@ -83,16 +139,23 @@ function setup() {
   resizeScreen();
 
   setupChimes();
+  setupFireflies();
 }
 
 function setupChimes() {
   var spacing = 15;
-  var padding = width / 6; //6 is num of chimes
-  var scale = padding - spacing - (spacing / 6);
+  var padding = width / numOfChimes;
+  var scale = padding - spacing - (spacing / numOfChimes);
 
   //Code for spacing found at: https://editor.p5js.org/slow_izzm/sketches/m7v7d87kL
-  for(let i = 1; i <= 6; i++) {
+  for(let i = 1; i <= numOfChimes; i++) {
     chimes.push(new Chime((scale*0.5)+spacing+(i-1)*(scale+spacing), `./sounds/chimes-${i}.wav`));
+  }
+}
+
+function setupFireflies() {
+  for(let i = 0; i < numOfFireflies; i++) {
+    fireflies.push(new Firefly());
   }
 }
 
@@ -103,13 +166,20 @@ function draw() {
     chime.displayGlow();
     chime.display();
   }
+
+  for(let firefly of fireflies) {
+    firefly.blink();
+    firefly.display();
+    firefly.edges();
+    firefly.update();
+  }
 }
 
 function mousePressed() {
   for(let chime of chimes) {
     if(chime.wasClicked()) {
       chime.sound.play();
-      chime.glowRadius = 60; //TEST
+      chime.glowRadius = 60;
     }
   }
 }
