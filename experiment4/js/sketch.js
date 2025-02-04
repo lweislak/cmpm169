@@ -18,6 +18,7 @@ class Chime {
     this.color = color(random(255), random(255), random(255)); //Get random rgb color
 
     this.glowRadius = 0; //TEST
+    this.maxGlowRadius = 200;
   }
 
   display() {
@@ -34,6 +35,7 @@ class Chime {
     vertex(this.position.x + radius, this.position.y);
     endShape();
     ellipse(this.position.x, this.position.y, this.width, 10); //Draw top of chime
+    strokeWeight(2);
     line(this.position.x, this.position.y, this.position.x, 0); //Draw string
   }
 
@@ -47,11 +49,15 @@ class Chime {
     return false;
   }
 
+  //Blur code found at: https://stackoverflow.com/a/71086079
+  //Display a glow from chime that expands as time goes on
   displayGlow() {
-    if(this.glowRadius > 0 && this.glowRadius < 200) {
+    if(this.glowRadius > 0 && this.glowRadius < this.maxGlowRadius) {
+      drawingContext.filter = 'blur(20px)';
       this.glowRadius++;
       fill(this.color, this.glowRadius);
       circle(this.position.x, this.position.y + 100, this.glowRadius);
+      drawingContext.filter = 'none';
     }
   }
 }
