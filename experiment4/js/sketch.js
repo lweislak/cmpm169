@@ -5,13 +5,14 @@
 // Globals
 let canvasContainer;
 var centerHorz, centerVert;
+let chimes = [];
 
 class Chime {
-  constructor(x, y) {
-    this.position = createVector(x, y);
+  constructor(x, sound) {
+    this.position = createVector(x, random(50, 400));
     this.height = 200;
     this.width = 80;
-    this.sound = loadSound('./sounds/chimes-7.wav');
+    this.sound = loadSound(sound);
   }
 
   display() {
@@ -62,12 +63,18 @@ function setup() {
   });
   resizeScreen();
 
-  chimes = [];
+  setupChimes();
+}
 
-  testChime = new Chime(600, 200); //TEST
-  testChime2 = new Chime(900, 350);
-  chimes.push(testChime);
-  chimes.push(testChime2);
+function setupChimes() {
+  var spacing = 15;
+  var padding = width / 6; //6 is num of chimes
+  var scale = padding - spacing - (spacing / 6);
+
+  //Code for spacing found at: https://editor.p5js.org/slow_izzm/sketches/m7v7d87kL
+  for(let i = 1; i <= 6; i++) {
+    chimes.push(new Chime((scale*0.5)+spacing+(i-1)*(scale+spacing), `./sounds/chimes-${i}.wav`));
+  }
 }
 
 function draw() {
@@ -75,10 +82,6 @@ function draw() {
 
   for(let chime of chimes) {
     chime.display();
-
-    strokeWeight(8); //TEST
-    stroke("red");
-    point(chime.position.x, chime.position.y);
   }
 }
 
