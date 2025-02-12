@@ -53,10 +53,10 @@ class Cube {
 		}
 	}
 
+	//Remove cube when it goes out of bounds
 	checkBounds() {
 		if(this.x > width/2  + this.offset || this.x < -width/2 - this.offset) {
-			//cubes.pop(this); //This is causing issues
-			console.log("REMOVE CUBE");
+			cubes.splice(cubes.indexOf(this), 1);
 		}
 	}
 }
@@ -81,7 +81,6 @@ function setup() {
   });
   resizeScreen();
 
-	//cubes.push(new Cube(0, -100 ,20));
   background(255);
 }
 
