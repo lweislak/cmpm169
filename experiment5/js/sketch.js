@@ -2,8 +2,7 @@
 // Author: Lo Weislak
 // Date: 2/10/25
 
-//Idea: Have a deck of cards that can be moved.
-//Leaves a trail behind like the ending of Solitare
+//Idea: Have length of time mouse is held determine size/color of cube
 
 // Globals
 let canvasContainer;
@@ -11,26 +10,33 @@ var centerHorz, centerVert;
 
 let cubes = [];
 
+let down;
+let mouseClickTime = 0;
+var clipX, clipY;
+
 class Cube {
-	constructor(x, y) {
+	constructor(x, y, size) {
 		this.x = x;
 		this.y = y;
+		this.size = size;
 		this.angle = 0;
-		this.dx = random(-3, 3);
+		this.dx = Math.random() * (5 + 4) - 5;
 		this.dy = 0;
-		this.offset = 50; //Determines how far off screen cube must be to remove
+		this.offset = size + 20; //Determines how far off screen cube must be to remove
 	}
 
 	draw() {
+		push();
 		this.rotate();
 		this.setSpeed();
+		pop();
 	}
 
 	rotate() {
 		translate(this.x, this.y, 0);
 		rotateX(this.angle);
 		rotateY(this.angle);
-		box();
+		box(this.size);
 		this.angle += 0.01;
 	}
 
@@ -47,11 +53,10 @@ class Cube {
 		}
 	}
 
-	//TODO: Fix. Add offset
 	checkBounds() {
-		if(this.x > width/2  + this.offset|| this.x < -width/2 - this.offset) {
+		if(this.x > width/2  + this.offset || this.x < -width/2 - this.offset) {
+			//cubes.pop(this); //This is causing issues
 			console.log("REMOVE CUBE");
-			cubes.pop(this);
 		}
 	}
 }
@@ -76,8 +81,8 @@ function setup() {
   });
   resizeScreen();
 
+	//cubes.push(new Cube(0, -100 ,20));
   background(255);
-  cubes.push(new Cube(0, 0));
 }
 
 function draw() {
@@ -88,8 +93,23 @@ function draw() {
 	}
 }
 
-function mouseClicked() {
-	if((mouseX > 0 && mouseX < width) && (mouseY > 0 && mouseY < height)) {
-		//TODO: Add cube
+function mousePressed() {
+	if(canvasPressed()) {
+		down = Date.now(); //Set start of mouse click timer
 	}
+}
+
+function mouseReleased() {
+	if(canvasPressed()) {
+		mouseClickTime = Date.now() - down; //Determine how long mouse was pressed
+		cubes.push(new Cube(mouseX - width/2, mouseY - height/2, mouseClickTime/10));
+	}
+}
+
+//Helper function to determine if mouse was pressed on the canvas
+function canvasPressed() {
+	if((mouseX > 0 && mouseX < width) && (mouseY > 0 && mouseY < height)) {
+		return true;
+	}
+	return false;
 }
