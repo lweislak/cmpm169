@@ -12,7 +12,6 @@ let cubes = [];
 
 let down;
 let mouseClickTime = 0;
-var clipX, clipY;
 
 class Cube {
 	constructor(x, y, size) {
@@ -20,7 +19,7 @@ class Cube {
 		this.y = y;
 		this.size = size;
 		this.angle = 0;
-		this.dx = Math.random() * (5 + 4) - 5;
+		this.dx = Math.random() * (5 + 4) - 5; //Set random speed in x direction
 		this.dy = 0;
 		this.offset = size + 20; //Determines how far off screen cube must be to remove
 	}
