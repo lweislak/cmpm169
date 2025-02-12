@@ -12,6 +12,7 @@ let cubes = [];
 
 let down;
 let mouseClickTime = 0;
+let tempCube = false;
 
 class Cube {
 	constructor(x, y, size) {
@@ -89,11 +90,19 @@ function draw() {
 		cube.bounce();
 		cube.checkBounds();
 	}
+
+	if(tempCube) {
+		push();
+		translate(mouseX - width/2, mouseY - height/2, 0);
+		box((Date.now() - down)/10);
+		pop();
+	}
 }
 
 function mousePressed() {
 	if(canvasPressed()) {
 		down = Date.now(); //Set start of mouse click timer
+		tempCube = true;
 	}
 }
 
@@ -101,6 +110,7 @@ function mouseReleased() {
 	if(canvasPressed()) {
 		mouseClickTime = Date.now() - down; //Determine how long mouse was pressed
 		cubes.push(new Cube(mouseX - width/2, mouseY - height/2, mouseClickTime/10));
+		tempCube = false;
 	}
 }
 
