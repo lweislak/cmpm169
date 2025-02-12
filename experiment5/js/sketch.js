@@ -12,34 +12,44 @@ var centerHorz, centerVert;
 let cubes = [];
 
 class Cube {
-	constructor() {
-		console.log(`width:${width}, height:${height}`);
+	constructor(x, y) {
+		this.x = x;
+		this.y = y;
 		this.angle = 0;
-		this.x = width/4;
-		this.y = -height/8;
-		this.dx = random(-3, 3);;
+		this.dx = random(-3, 3);
 		this.dy = 0;
+		this.offset = 50; //Determines how far off screen cube must be to remove
 	}
 
 	draw() {
+		this.rotate();
+		this.setSpeed();
+	}
+
+	rotate() {
 		translate(this.x, this.y, 0);
 		rotateX(this.angle);
 		rotateY(this.angle);
 		box();
 		this.angle += 0.01;
+	}
 
+	setSpeed() {
 		this.x += this.dx;
 		this.dy += 0.1;
 		this.y += this.dy;
-	
-		// Bounce
-		if (this.y > height) {
-			this.dy *= -0.8;
-			this.y = height;
-		}
+	}
 
-		//TODO: Fix
-		if(this.x > canvasContainer.width() || this.x < -canvasContainer.width()) {
+	bounce() {
+		if (this.y > height/2) {
+			this.dy *= -1;
+			this.y = height/2;
+		}
+	}
+
+	//TODO: Fix. Add offset
+	checkBounds() {
+		if(this.x > width/2  + this.offset|| this.x < -width/2 - this.offset) {
 			console.log("REMOVE CUBE");
 			cubes.pop(this);
 		}
@@ -67,11 +77,19 @@ function setup() {
   resizeScreen();
 
   background(255);
-  cubes.push(new Cube());
+  cubes.push(new Cube(0, 0));
 }
 
 function draw() {
 	for(let cube of cubes) {
 		cube.draw();
+		cube.bounce();
+		cube.checkBounds();
+	}
+}
+
+function mouseClicked() {
+	if((mouseX > 0 && mouseX < width) && (mouseY > 0 && mouseY < height)) {
+		//TODO: Add cube
 	}
 }
