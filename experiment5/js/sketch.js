@@ -1,4 +1,6 @@
-// sketch.js - purpose and description here
+// sketch.js - Click anywhere on the canvas to create cubes of varying sizes that bounce around the screen
+//Press and hold the mouse click to grow the cube
+
 // Author: Lo Weislak
 // Date: 2/10/25
 
