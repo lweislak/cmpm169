@@ -47,20 +47,38 @@
 
 			<div class="minor-section">
 				<h2>Description</h2>
+				<p>Press and hold a mouse click anywhere on the canvas in order to create a cube. The cube grows as the mouse is held down.
+					Once the mouse button is released the cube direction and speed is randomly generated; it moves across the screen
+					and bounces when it hits the bottom of the screen.
+				</p>
 				<p>
+					The inspiration was the ending screen of Solitaire where the cards move and bounce across the screen one by one.
 				</p>
 
 			</div>
 
 			<div class="minor-section">
 				<h2>Technical</h2>
+				<p>The experiment utilizes WebGL to draw and rotate the cubes. The draw function does not erase the previous paths of the cubes 
+					in order to create a trail behind them as they move. The rotate function is called from within the draw function and the
+					angle of the cubes is increased by 0.1 in order to create the animation.
+				</p>
 				<p>
+					Once a cube is off screen, checked with the size of the canvas and an offset to account for the size of the cube, the array 
+					that holds the cubes is spliced to remove the object. The object is found in the array using the indexOf function.
 				</p>
 			</div>
 
 			<div class="minor-section">
 				<h2>Reflection</h2>
+				<p> I am very happy with the experiment and I feel like I achieved what I had originally envisioned. I have a lot of nostalgia 
+					for the digital Solitaire that used to come with a fresh install of Windows. This experiment brings back memories of playing on my 
+					family computer with my dad.
+				</p>
 				<p>
+					The most difficult, time consuming part of the experiment was understanding the WebGL axis. Once I had a handle on it everything 
+					else came pretty easily. I wanted to add color to the cubes in order to create more visual interest, but the black and white 
+					looks nice. It almost makes it look M.C. Escher-esque after enough cubes are created.
 				</p>
 			</div>
 
