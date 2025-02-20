@@ -2,7 +2,7 @@
 // Font creates a mirror effect so words are readable when rotated on the x-axis
 
 // Author: Lo Weislak
-// Date: 2/17/25
+// Date: 2/19/25
 
 //Random words text file: https://github.com/Shreda/pentestTools/blob/master/random-words.txt
 //Lake Reflection font: https://fontmeme.com/fonts/lake-reflection-font/
@@ -13,13 +13,15 @@ var centerHorz, centerVert;
 
 let words = [];
 let totalWords = [];
+const TEXT_SIZE = 50;
+const BACKGROUND_COLOR = 10;
 
 class Word {
   constructor(word, x, y) {
     this.word = word;
     this.position = {x: x - width/2, y: y - height/2};
     this.angle = 0;
-    this.blue = random() * 255;
+    this.blue = random() * 255; //Create random shade of blue/green
     this.green = random() * 255;
   }
 
@@ -27,9 +29,7 @@ class Word {
     push();
     translate(this.position.x, this.position.y, 0);
     rotateX(this.angle);
-    fill(0, this.green, this.blue);
-    //text(this.word, this.position.x, this.position.y);
-    textAlign(CENTER);
+    fill(0, this.green, this.blue); //RGB
     text(this.word, 0, 0);
     this.angle += 0.01;
     pop();
@@ -61,15 +61,15 @@ function setup() {
   });
   resizeScreen();
 
-  background(10);
+  background(BACKGROUND_COLOR);
 }
 
 function draw() {
-  background(10);
+  background(BACKGROUND_COLOR);
 
   textFont(font);
   textAlign(CENTER,CENTER);
-  textSize(50);
+  textSize(TEXT_SIZE);
 
   for(let word of words) {
     word.draw();
@@ -78,7 +78,6 @@ function draw() {
 
 function mouseClicked() {
   if(canvasPressed()) {
-    //words.push(new Word(totalWords.pop(), mouseX, mouseY));
     words.push(new Word(totalWords.splice(random()*totalWords.length, 1), mouseX, mouseY)); //Select and remove a random word from array
   }
 }
