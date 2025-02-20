@@ -4,6 +4,7 @@
 // Date: 2/17/25
 
 //Random words text file: https://github.com/Shreda/pentestTools/blob/master/random-words.txt
+//Text inspo: https://editor.p5js.org/Jennybkowalski/sketches/N-geQ3DRx
 
 // Globals
 let canvasContainer;
@@ -47,10 +48,10 @@ function draw() {
   //rotateY(map(mouseY,0,height,0,TWO_PI));
   //rotateZ(map(frameCount,0,600,0,TWO_PI))
   push();
-  for(let i=0; i<100; i++) {
-    fill(map(i,0,100,0,255),80,215);
-    translate(0,0,0.5); //Give text depth
-    text("Hello",0,0);
+  for(let i = 0; i < 100; i++) {
+    fill(map(i, 0, 100, 0, 255), 80, 215);
+    translate(0, 0, 0.5); //Give text depth
+    text("Hello", 0, 0);
   }
   pop();
 }
