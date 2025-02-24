@@ -30,6 +30,18 @@ function setup() {
   background(0);
 }
 
-function draw() {
+let circleSize = 100;
 
+function draw() {
+  background(15);
+	circle(0, 0, circleSize);
+}
+
+function mouseWheel(event) {
+	if(event.delta > 0){
+		circleSize += 10;
+	} else {
+		circleSize -= 10;
+	}
+	return false; //Prohibit scroll
 }
