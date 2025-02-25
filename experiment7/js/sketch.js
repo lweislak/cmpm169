@@ -26,15 +26,13 @@ function setup() {
     resizeScreen();
   });
   resizeScreen();
-
-  background("rgb( 0, 0, 30)");
 }
 
-let scrollAmount = 50;
+let scrollAmount = 10;
 let blue = 30;
 let green = 0;
 
-let lines = [];
+let lines = [10];
 
 function draw() {
   //background(`rgb(0, ${green} , ${blue})`);
@@ -55,10 +53,9 @@ function mouseWheel(event) {
 
   //TODO: Fix!!
    //Stop user from scrolling to the left
-  if(scrollAmount < 50) {
-    scrollAmount = 50;
+  if(scrollAmount <= 10) {
+    scrollAmount = 10;
     //background(`rgb(0, 0, 30)`);
-    return false;
   }
 
   //Determine if scrolling up or down
